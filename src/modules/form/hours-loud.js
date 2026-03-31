@@ -4,7 +4,9 @@ import { OpeningHours } from  "../../utils/opening-hours.js"
 
 const hours = document.getElementById("hours")
 
-export function hoursLoad(date){
+export function hoursLoad({date}){
+ hours.innerHTML = ""
+
     const opning = openingHours.map((hour) => {
         const [scheduleHour] = hour.split(":")
 
@@ -23,14 +25,34 @@ export function hoursLoad(date){
 
 opening.forEach(({hour, available}) =>{
     const li = document.createElement("li")
+     //Adiciona os eventos de cliquis
+    hoursClick()
 
     li.classList.add("hour")
     li.classList.add(available ? "hour-available" : "hour-unavailable")
 
 
     li.textContent = hour
+
+     if(hour ==="9:00"){
+        houerHeaderAdd("Manhã")
+     }else if(hour ==="13:00"){
+        hourHeaderAdd("Tarde")
+
+     }else if(hour === "18:00"){
+        houerHeaderAdd("Noite")
+
+     }
+
     hours.append(li)
         
 })
 
+}
+function hourHeaderAdd(title){
+    const header = document.createElement(li)
+    header.classList.add("houer-period")
+    header.textContent = title
+
+    hours.append(header)
 }
