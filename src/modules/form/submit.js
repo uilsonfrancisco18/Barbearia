@@ -1,4 +1,8 @@
-import dayjs from "dayjs";  
+import dayjs from "dayjs";
+
+import { scheduleNew } from "../../services/schedule-new.js"
+import { schedulesDay } from "../schedules/load.js"
+
 const form = document.querySelector(".form")
 const selectedDate = document.getElementById("date")
 const clientName = document.getElementById("client")
@@ -10,7 +14,7 @@ selectedDate.value = dayjs(new Date()).format("YYYY-MM-DD")
 selectedDate.min = dayjs(new Date()).format("YYYY-MM-DD")
 
 
-form.onsubmit = function(event) {
+form.onsubmit = async(event) => {
     //previne o comportamento padrão do fomulário, que é carregar a página
     event.preventDefault(); 
     
@@ -24,32 +28,32 @@ form.onsubmit = function(event) {
         if(!name){
             return alert("Informe o nome do cliente!")
         }
-        //Recupera horário selecionado
-        const hourSeleted = document.querySelector(".hour-selected")
-       
-        if (!hourSelected){
+        // Recupera horário selecionado
+        const hourSelected = document.querySelector(".hour-selected")
+
+        if (!hourSelected) {
             return alert("Selecione a hora!")
         }
 
+        // Recupera somente a hora
+        const [hour] = hourSelected.innerText.split(":")
 
-      //Recupera somento a hora
-      const [hour] = hourSelected.innerText.split(":")
+        // Inserir a hora na data (mantendo formato ISO para salvar no JSON)
+        const when = dayjs(selectedDate.value).hour(Number(hour)).minute(0).second(0)
 
+        // Gera um ID
+        const id = new Date().getTime()
 
-      //Inserir a hora na data
-      const when = dayjs(selectedDate.value).add(hour, "hour")
-      
-      //Gera um ID
-      const id = new Date().getTime()
-       
-      console.log({
-        id,
-        name,
-        when,
-      })
+        await scheduleNew({
+            id,
+            name,
+            when: when.toISOString(),
+        })
 
+        // Recarrega agenda para refletir o novo agendamento
+        schedulesDay()
 
-    }catch(error){
+    } catch(error) {
         alert("N~so foi possível realizar o agendamento.")
     }
 }

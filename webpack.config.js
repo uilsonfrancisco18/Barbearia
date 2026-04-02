@@ -17,7 +17,7 @@ module.exports = {
         static: {
             directory: path.join(__dirname, 'dist')
         },
-        port: 3001,
+        port: 8080,
         open: true,
         liveReload: true
     },
@@ -50,6 +50,10 @@ module.exports = {
                     presets: ["@babel/preset-env"]
                 },
               },
+            },
+            {
+                test: /\.(png|svg|jpg|jpeg|gif)$/i,
+                type: 'asset/resource',
             },
 
         ],
