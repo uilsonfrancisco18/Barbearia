@@ -1,73 +1,67 @@
 import dayjs from "dayjs";
 import cancelIconPath from "../../assets/cancel.svg";
+import { scheduleDelete } from "../../services/schedule-delete.js";
+console.log("SVG:", cancelIconPath);
 
-const BASE_URL = "http://localhost:3333";
 
-export function schedulesShow(daySchedules = []) {
+const periodMorning = document.getElementById("period-morning");
+const periodAfternoon = document.getElementById("period-afternoon");
+const periodEvening = document.getElementById("period-night");
 
-  const periodMorning = document.getElementById("period-morning");
-  const periodAfternoon = document.getElementById("period-afternoon");
-  const periodENight = document.getElementById("period-night");
-
+export function scheduleShow({ dailySchedules }) {
   try {
-    periodMorning.innerHTML = "";
-    periodAfternoon.innerHTML = "";
-    periodENight.innerHTML = "";
+    // Limpa os períodos antes de renderizar
+    periodMorning.innerHTML = ""
+    periodAfternoon.innerHTML = ""
+    periodEvening.innerHTML = ""
 
-    daySchedules.forEach((schedule) => {
+    dailySchedules.forEach((schedule) => {
+      // Lógica para renderizar cada agendamento
       const item = document.createElement("li");
-      const time = document.createElement("strong");
+      const time = document.createElement("Strong");
       const name = document.createElement("span");
 
-      item.setAttribute("data-id", schedule.id);
 
-      const scheduleTime = dayjs(schedule.when).format("HH:mm");
-      time.textContent = scheduleTime;
+      //Adicionar o id do agendamento 
+      item.setAttribute("data-id", schedule.id)
+
+      time.textContent = dayjs(schedule.when).format("HH:mm");
       name.textContent = schedule.name;
 
-      item.title = `${scheduleTime} - ${schedule.name}`;
-
+      //Item de cancelar
       const cancelIcon = document.createElement("img");
       cancelIcon.classList.add("cancel-icon");
-      cancelIcon.src = cancelIconPath;
-      cancelIcon.alt = "Cancelar";
-      cancelIcon.style.cursor = "pointer";
+      cancelIcon.setAttribute("src", "/src/assets/cancel.svg");
+      cancelIcon.setAttribute("alt", "Cancelar ");
 
-      cancelIcon.addEventListener("click", async (event) => {
-        event.stopPropagation();
-
-        if (!confirm("Deseja cancelar esse agendamento?")) return;
-
-        try {
-          await fetch(`${BASE_URL}/schedules/${schedule.id}`, {
-            method: "DELETE",
-          });
-
-          item.remove();
-
-        } catch (error) {
-          console.error("Erro ao excluir:", error);
-          alert("Erro ao cancelar");
+      // Adiciona clique para deletar agendamento
+      cancelIcon.addEventListener("click", () => {
+        if (confirm("Tem certeza que deseja cancelar este agendamento?")) {
+          scheduleDelete(schedule.id);
         }
       });
 
-      item.appendChild(time);
-      item.appendChild(name);
-      item.appendChild(cancelIcon);
 
+      //Adicionar tempo, nome e ícone
+      item.append(time, name, cancelIcon);
+
+      //Óbtem somente a hora
       const hour = dayjs(schedule.when).hour();
 
-      if (hour <= 12) {
+
+      //renderiza o agendamento na sessao de forma condicional
+      if (hour >= 6 && hour < 12) {
+
         periodMorning.appendChild(item);
-      } else if (hour <= 18) {
+      } else if (hour >= 13 && hour < 18) {
+
         periodAfternoon.appendChild(item);
       } else {
-        periodENight.appendChild(item);
+
+        periodEvening.appendChild(item);
       }
     });
-
   } catch (error) {
-    console.error(error);
-    alert("Erro ao renderizar horários");
+    console.log("Erro ao exibir agendamentos:", error)
   }
 }

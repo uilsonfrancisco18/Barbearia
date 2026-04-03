@@ -53,7 +53,14 @@ form.onsubmit = async(event) => {
         // Recarrega agenda para refletir o novo agendamento
         schedulesDay()
 
+        // Mostra mensagem de sucesso
+        alert("Serviço agendado com sucesso!")
+
+        // Limpa o formulário
+        form.reset()
+        clientName.focus()
+
     } catch(error) {
-        alert("N~so foi possível realizar o agendamento.")
+        alert("Não foi possível realizar o agendamento.")
     }
 }
