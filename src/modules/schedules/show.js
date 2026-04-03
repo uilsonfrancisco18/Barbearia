@@ -31,7 +31,7 @@ export function scheduleShow({ dailySchedules }) {
       //Item de cancelar
       const cancelIcon = document.createElement("img");
       cancelIcon.classList.add("cancel-icon");
-      cancelIcon.setAttribute("src", "/src/assets/cancel.svg");
+      cancelIcon.setAttribute("src", cancelIconPath);
       cancelIcon.setAttribute("alt", "Cancelar ");
 
       // Adiciona clique para deletar agendamento

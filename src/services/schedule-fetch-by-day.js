@@ -1,27 +1,19 @@
 import dayjs from "dayjs";
 import { apiConfig } from "./api-config.js";
 
-async function requestWithFallback(path, options) {
-    const urls = [apiConfig.baseUrl, "http://localhost:3001"];
+async function request(path, options) {
+  const response = await fetch(`${apiConfig.baseUrl}${path}`, options);
 
-    for (const baseUrl of urls) {
-        try {
-            const response = await fetch(`${baseUrl}${path}`, options);
-            if (response.ok) {
-                return response;
-            }
-            console.warn(`Request to ${baseUrl}${path} returned ${response.status}`);
-        } catch (err) {
-            console.warn(`Request to ${baseUrl}${path} failed:`, err.message);
-        }
-    }
+  if (!response.ok) {
+    throw new Error(`Erro na requisição: ${response.status}`);
+  }
 
-    throw new Error(`Nenhum servidor disponível para requisição ${path}`);
+  return response;
 }
 
 export async function scheduleFetchByDay({ date }) {
     try {
-        const response = await requestWithFallback("/schedules", { method: "GET" });
+        const response = await request("/schedules", { method: "GET" });
         const data = await response.json();
 
         // normaliza datas sem timezone para comparação no calendário

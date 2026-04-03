@@ -22,7 +22,7 @@ export async function schedulesDay() {
     scheduleShow({ dailySchedules });
 
     // Renderiza os horários disponíveis no formulário
-    hoursLoad({ date });
+    hoursLoad({ date, dailySchedules });
   } catch (error) {
     console.log(error);
     alert("Não foi possível carregar os horários do dia.");
